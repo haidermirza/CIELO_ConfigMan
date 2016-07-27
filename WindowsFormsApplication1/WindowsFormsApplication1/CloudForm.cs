@@ -318,7 +318,7 @@ namespace WindowsFormsApplication1 {
 		}
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
-			MessageBox.Show("Haider Mirza", "About This Software", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			MessageBox.Show("Version: 0.0.5\nAuthor: Haider Mirza", "About This Software", MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		private void btnMqttConnect_Click(object sender, EventArgs e) {
