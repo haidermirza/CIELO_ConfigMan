@@ -336,6 +336,10 @@ namespace WindowsFormsApplication1 {
 				}
 			}
 
+			catch (uPLibrary.Networking.M2Mqtt.Exceptions.MqttConnectionException a) {
+				MessageBox.Show("Network connectivity error!", "Error Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+
 			catch (Exception a) {
 				MessageBox.Show(a.ToString());
 			}
