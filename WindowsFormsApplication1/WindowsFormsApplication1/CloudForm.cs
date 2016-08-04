@@ -152,8 +152,8 @@ namespace WindowsFormsApplication1 {
 
 		private void Form1_Load(object sender, EventArgs e) {
 
-			cbxMqttServer.Items.Add("52.90.153.21");
 			cbxMqttServer.Items.Add("52.91.14.160");
+			cbxMqttServer.Items.Add("52.90.153.21");
 			cbxMqttServer.SelectedIndex = 0;
 
 			txtHeartbeat.MaxLength = 3;
@@ -318,7 +318,7 @@ namespace WindowsFormsApplication1 {
 		}
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
-			MessageBox.Show("Version: 0.0.5\nAuthor: Haider Mirza", "About This Software", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			MessageBox.Show("Version: 0.0.6\nAuthor: Haider Mirza", "About This Software", MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		private void btnMqttConnect_Click(object sender, EventArgs e) {
@@ -403,7 +403,5 @@ namespace WindowsFormsApplication1 {
 
 			ushort msgIdPub = MQTTclient.Publish(topicPub, Encoding.UTF8.GetBytes(MqttMsg), MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
 		}
-
-
 	}
 }

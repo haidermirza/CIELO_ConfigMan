@@ -95,7 +95,7 @@
 			this.txtSendMqtt.Name = "txtSendMqtt";
 			this.txtSendMqtt.Size = new System.Drawing.Size(137, 21);
 			this.txtSendMqtt.TabIndex = 30;
-			this.txtSendMqtt.Text = "052.090.153.021";
+			this.txtSendMqtt.Text = "052.091.014.160";
 			// 
 			// btnShowAllDevices
 			// 
@@ -126,7 +126,7 @@
 			this.txtDeviceIP.Name = "txtDeviceIP";
 			this.txtDeviceIP.Size = new System.Drawing.Size(132, 21);
 			this.txtDeviceIP.TabIndex = 2;
-			this.txtDeviceIP.Text = "192.168.100.12";
+			this.txtDeviceIP.Text = "192.168.4.1";
 			// 
 			// txtResponseWin
 			// 
@@ -238,7 +238,7 @@
 			// 
 			// btnResetLogs
 			// 
-			this.btnResetLogs.Location = new System.Drawing.Point(355, 452);
+			this.btnResetLogs.Location = new System.Drawing.Point(375, 454);
 			this.btnResetLogs.Name = "btnResetLogs";
 			this.btnResetLogs.Size = new System.Drawing.Size(106, 23);
 			this.btnResetLogs.TabIndex = 19;
@@ -306,7 +306,7 @@
             this.toolStripStatusLabel1});
 			this.statusStrip1.Location = new System.Drawing.Point(0, 487);
 			this.statusStrip1.Name = "statusStrip1";
-			this.statusStrip1.Size = new System.Drawing.Size(943, 22);
+			this.statusStrip1.Size = new System.Drawing.Size(952, 22);
 			this.statusStrip1.TabIndex = 22;
 			this.statusStrip1.Text = "statusStrip1";
 			// 
@@ -351,7 +351,7 @@
             this.aboutToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Size = new System.Drawing.Size(943, 25);
+			this.menuStrip1.Size = new System.Drawing.Size(952, 25);
 			this.menuStrip1.TabIndex = 25;
 			this.menuStrip1.Text = "menuStrip1";
 			// 
@@ -371,7 +371,7 @@
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+			this.toolStripSeparator1.Size = new System.Drawing.Size(57, 6);
 			// 
 			// groupBox6
 			// 
@@ -379,7 +379,7 @@
 			this.groupBox6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.groupBox6.Location = new System.Drawing.Point(258, 38);
 			this.groupBox6.Name = "groupBox6";
-			this.groupBox6.Size = new System.Drawing.Size(234, 408);
+			this.groupBox6.Size = new System.Drawing.Size(229, 408);
 			this.groupBox6.TabIndex = 26;
 			this.groupBox6.TabStop = false;
 			this.groupBox6.Text = "Output";
@@ -427,19 +427,20 @@
 			// txtResponceMQTT
 			// 
 			this.txtResponceMQTT.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+			this.txtResponceMQTT.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.txtResponceMQTT.Location = new System.Drawing.Point(6, 19);
 			this.txtResponceMQTT.Multiline = true;
 			this.txtResponceMQTT.Name = "txtResponceMQTT";
 			this.txtResponceMQTT.ReadOnly = true;
 			this.txtResponceMQTT.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.txtResponceMQTT.Size = new System.Drawing.Size(216, 375);
+			this.txtResponceMQTT.Size = new System.Drawing.Size(233, 375);
 			this.txtResponceMQTT.TabIndex = 30;
 			this.txtResponceMQTT.WordWrap = false;
 			this.txtResponceMQTT.TextChanged += new System.EventHandler(this.txtResponceMQTT_TextChanged);
 			// 
 			// btnEraseResponceWin
 			// 
-			this.btnEraseResponceWin.Location = new System.Drawing.Point(786, 452);
+			this.btnEraseResponceWin.Location = new System.Drawing.Point(820, 454);
 			this.btnEraseResponceWin.Name = "btnEraseResponceWin";
 			this.btnEraseResponceWin.Size = new System.Drawing.Size(106, 23);
 			this.btnEraseResponceWin.TabIndex = 31;
@@ -530,7 +531,7 @@
 			this.groupBox12.Controls.Add(this.txtResponceMQTT);
 			this.groupBox12.Location = new System.Drawing.Point(687, 38);
 			this.groupBox12.Name = "groupBox12";
-			this.groupBox12.Size = new System.Drawing.Size(234, 408);
+			this.groupBox12.Size = new System.Drawing.Size(249, 408);
 			this.groupBox12.TabIndex = 34;
 			this.groupBox12.TabStop = false;
 			this.groupBox12.Text = "MQTT Messages Log ( /accepted )";
@@ -577,7 +578,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.BackColor = System.Drawing.SystemColors.ButtonFace;
-			this.ClientSize = new System.Drawing.Size(943, 509);
+			this.ClientSize = new System.Drawing.Size(952, 509);
 			this.Controls.Add(this.btnCurrentConfig);
 			this.Controls.Add(this.groupBox13);
 			this.Controls.Add(this.groupBox12);
