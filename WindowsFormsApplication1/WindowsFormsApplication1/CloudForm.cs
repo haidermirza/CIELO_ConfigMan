@@ -41,7 +41,7 @@ namespace WindowsFormsApplication1 {
 		void SendUdpCommand(String command, bool IsBroadcast = false) {
 
 			UdpClient udpClient = new UdpClient();
-			IPEndPoint ip = new IPEndPoint(IsBroadcast ? IPAddress.Broadcast : IPAddress.Parse(txtDeviceIP.Text), 9999);
+			IPEndPoint ip = new IPEndPoint(IsBroadcast ? IPAddress.Broadcast : IPAddress.Parse(cbxDeviceIp.Text), 9999);
 			byte[] bytes = Encoding.ASCII.GetBytes(command);
 			udpClient.Send(bytes, bytes.Length, ip);
 			udpClient.BeginReceive(new AsyncCallback(recv), udpClient);
@@ -82,7 +82,7 @@ namespace WindowsFormsApplication1 {
 					}
 				}
 
-				cbxMqttServer.Enabled = true;
+				cbxMqttConnectionServer.Enabled = true;
 				txtMacAddr.Enabled = true;
 				btnSendMqtt.Enabled = false;
 				btnCurrentConfig.Enabled = false;
@@ -98,7 +98,7 @@ namespace WindowsFormsApplication1 {
 			isMqttDisconnected = true;
 
 			String mac = txtMacAddr.Text;
-			String server = cbxMqttServer.Text;
+			String server = cbxMqttConnectionServer.Text;
 			topicPub = "$aws/things/" + mac + "/shadow/update";
 			topicSub = "$aws/things/" + mac + "/shadow/update/accepted";
 
@@ -111,7 +111,7 @@ namespace WindowsFormsApplication1 {
 			MQTTclient.MqttMsgPublishReceived += client_MqttMsgPublishReceived;
 			txtResponceMQTT.Text += Environment.NewLine + "MQTT Connected: " + server + Environment.NewLine;
 
-			cbxMqttServer.Enabled = false;
+			cbxMqttConnectionServer.Enabled = false;
 			txtMacAddr.Enabled = false;
 			btnSendMqtt.Enabled = true;
 			btnCurrentConfig.Enabled = true;
@@ -152,9 +152,17 @@ namespace WindowsFormsApplication1 {
 
 		private void Form1_Load(object sender, EventArgs e) {
 
-			cbxMqttServer.Items.Add("52.91.14.160");
-			cbxMqttServer.Items.Add("52.90.153.21");
-			cbxMqttServer.SelectedIndex = 0;
+			cbxMqttConnectionServer.Items.Add("52.91.14.160");
+			cbxMqttConnectionServer.Items.Add("52.90.153.21");
+			cbxMqttConnectionServer.SelectedIndex = 0;
+
+			cbxMqttDeviceServer.Items.Add("052.091.014.160");
+			cbxMqttDeviceServer.Items.Add("052.090.153.021");
+			cbxMqttDeviceServer.SelectedIndex = 0;
+
+			cbxDeviceIp.Items.Add("192.168.4.1");
+			cbxDeviceIp.SelectedIndex = 0;
+
 
 			txtHeartbeat.MaxLength = 3;
 		}
@@ -222,7 +230,7 @@ namespace WindowsFormsApplication1 {
 		private void btnShowWifi(object sender, EventArgs e) {
 
 			String command = "WL:\n";
-			String target = txtDeviceIP.Text;
+			String target = cbxDeviceIp.Text;
 			tcpCommand = 1;
 
 			MakeConnection(target, command);
@@ -233,7 +241,7 @@ namespace WindowsFormsApplication1 {
 			String pass = textBox4.Text;
 
 			String command = "ST:" + ssid + "," + pass + ",\n";
-			String target = txtDeviceIP.Text;
+			String target = cbxDeviceIp.Text;
 
 			tcpCommand = 2;
 
@@ -318,7 +326,7 @@ namespace WindowsFormsApplication1 {
 		}
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
-			MessageBox.Show("Version: 0.0.6\nAuthor: Haider Mirza", "About This Software", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			MessageBox.Show("Version: 0.0.7\nAuthor: Haider Mirza", "About This Software", MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		private void btnMqttConnect_Click(object sender, EventArgs e) {
@@ -336,7 +344,7 @@ namespace WindowsFormsApplication1 {
 				}
 			}
 
-			catch (uPLibrary.Networking.M2Mqtt.Exceptions.MqttConnectionException a) {
+			catch (uPLibrary.Networking.M2Mqtt.Exceptions.MqttConnectionException) {
 				MessageBox.Show("Network connectivity error!", "Error Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 
@@ -388,7 +396,7 @@ namespace WindowsFormsApplication1 {
 			String MqttMsgHeartbeat = Convert.ToInt32(txtHeartbeat.Text).ToString("D3");
 
 			String MqttMsg = "{\"state\":{\"reported\":null,\"desired\":{\"MqttServer\":\""
-												+ txtSendMqtt.Text
+												+ cbxMqttDeviceServer.Text
 												+ "\",\"ASrc\":\"Cloud\",\"CMD\":\"SETCONFIG\",\"TS\":\"1466245734\",\"Heartbeat\":\""
 												+ MqttMsgHeartbeat
 												+ "\"}}}";

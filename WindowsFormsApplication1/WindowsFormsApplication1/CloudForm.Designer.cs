@@ -25,10 +25,8 @@
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CloudForm));
-			this.txtSendMqtt = new System.Windows.Forms.TextBox();
 			this.btnShowAllDevices = new System.Windows.Forms.Button();
 			this.btnPing = new System.Windows.Forms.Button();
-			this.txtDeviceIP = new System.Windows.Forms.TextBox();
 			this.txtResponseWin = new System.Windows.Forms.TextBox();
 			this.button3 = new System.Windows.Forms.Button();
 			this.button4 = new System.Windows.Forms.Button();
@@ -54,7 +52,7 @@
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.groupBox6 = new System.Windows.Forms.GroupBox();
 			this.btnMqttConnect = new System.Windows.Forms.Button();
-			this.cbxMqttServer = new System.Windows.Forms.ComboBox();
+			this.cbxMqttConnectionServer = new System.Windows.Forms.ComboBox();
 			this.groupBox7 = new System.Windows.Forms.GroupBox();
 			this.txtMacAddr = new System.Windows.Forms.TextBox();
 			this.txtResponceMQTT = new System.Windows.Forms.TextBox();
@@ -63,6 +61,7 @@
 			this.groupBox9 = new System.Windows.Forms.GroupBox();
 			this.btnSendMqtt = new System.Windows.Forms.Button();
 			this.groupBox11 = new System.Windows.Forms.GroupBox();
+			this.cbxMqttDeviceServer = new System.Windows.Forms.ComboBox();
 			this.groupBox10 = new System.Windows.Forms.GroupBox();
 			this.lblHeartbeatMinutes = new System.Windows.Forms.Label();
 			this.txtHeartbeat = new System.Windows.Forms.TextBox();
@@ -70,6 +69,7 @@
 			this.groupBox13 = new System.Windows.Forms.GroupBox();
 			this.picMqttState = new System.Windows.Forms.PictureBox();
 			this.btnCurrentConfig = new System.Windows.Forms.Button();
+			this.cbxDeviceIp = new System.Windows.Forms.ComboBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox4.SuspendLayout();
@@ -87,15 +87,6 @@
 			this.groupBox13.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.picMqttState)).BeginInit();
 			this.SuspendLayout();
-			// 
-			// txtSendMqtt
-			// 
-			this.txtSendMqtt.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.txtSendMqtt.Location = new System.Drawing.Point(6, 20);
-			this.txtSendMqtt.Name = "txtSendMqtt";
-			this.txtSendMqtt.Size = new System.Drawing.Size(137, 21);
-			this.txtSendMqtt.TabIndex = 30;
-			this.txtSendMqtt.Text = "052.091.014.160";
 			// 
 			// btnShowAllDevices
 			// 
@@ -118,15 +109,6 @@
 			this.btnPing.Text = "Ping";
 			this.btnPing.UseVisualStyleBackColor = true;
 			this.btnPing.Click += new System.EventHandler(this.btnPing_e);
-			// 
-			// txtDeviceIP
-			// 
-			this.txtDeviceIP.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.txtDeviceIP.Location = new System.Drawing.Point(6, 21);
-			this.txtDeviceIP.Name = "txtDeviceIP";
-			this.txtDeviceIP.Size = new System.Drawing.Size(132, 21);
-			this.txtDeviceIP.TabIndex = 2;
-			this.txtDeviceIP.Text = "192.168.4.1";
 			// 
 			// txtResponseWin
 			// 
@@ -234,7 +216,7 @@
 			this.textBox4.Name = "textBox4";
 			this.textBox4.Size = new System.Drawing.Size(128, 21);
 			this.textBox4.TabIndex = 14;
-			this.textBox4.Text = "cielonayatel321?";
+			this.textBox4.Text = "nayatel321?";
 			// 
 			// btnResetLogs
 			// 
@@ -333,7 +315,7 @@
 			// 
 			// groupBox5
 			// 
-			this.groupBox5.Controls.Add(this.txtDeviceIP);
+			this.groupBox5.Controls.Add(this.cbxDeviceIp);
 			this.groupBox5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.groupBox5.Location = new System.Drawing.Point(16, 38);
 			this.groupBox5.Name = "groupBox5";
@@ -395,18 +377,18 @@
 			this.btnMqttConnect.UseVisualStyleBackColor = true;
 			this.btnMqttConnect.Click += new System.EventHandler(this.btnMqttConnect_Click);
 			// 
-			// cbxMqttServer
+			// cbxMqttConnectionServer
 			// 
-			this.cbxMqttServer.FormattingEnabled = true;
-			this.cbxMqttServer.Location = new System.Drawing.Point(6, 17);
-			this.cbxMqttServer.Name = "cbxMqttServer";
-			this.cbxMqttServer.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.cbxMqttServer.Size = new System.Drawing.Size(122, 23);
-			this.cbxMqttServer.TabIndex = 5;
+			this.cbxMqttConnectionServer.FormattingEnabled = true;
+			this.cbxMqttConnectionServer.Location = new System.Drawing.Point(6, 17);
+			this.cbxMqttConnectionServer.Name = "cbxMqttConnectionServer";
+			this.cbxMqttConnectionServer.RightToLeft = System.Windows.Forms.RightToLeft.No;
+			this.cbxMqttConnectionServer.Size = new System.Drawing.Size(122, 23);
+			this.cbxMqttConnectionServer.TabIndex = 5;
 			// 
 			// groupBox7
 			// 
-			this.groupBox7.Controls.Add(this.cbxMqttServer);
+			this.groupBox7.Controls.Add(this.cbxMqttConnectionServer);
 			this.groupBox7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.groupBox7.Location = new System.Drawing.Point(12, 33);
 			this.groupBox7.Name = "groupBox7";
@@ -486,7 +468,7 @@
 			// 
 			// groupBox11
 			// 
-			this.groupBox11.Controls.Add(this.txtSendMqtt);
+			this.groupBox11.Controls.Add(this.cbxMqttDeviceServer);
 			this.groupBox11.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.groupBox11.Location = new System.Drawing.Point(6, 100);
 			this.groupBox11.Name = "groupBox11";
@@ -494,6 +476,14 @@
 			this.groupBox11.TabIndex = 34;
 			this.groupBox11.TabStop = false;
 			this.groupBox11.Text = "MQTT Server";
+			// 
+			// cbxMqttDeviceServer
+			// 
+			this.cbxMqttDeviceServer.FormattingEnabled = true;
+			this.cbxMqttDeviceServer.Location = new System.Drawing.Point(12, 17);
+			this.cbxMqttDeviceServer.Name = "cbxMqttDeviceServer";
+			this.cbxMqttDeviceServer.Size = new System.Drawing.Size(122, 23);
+			this.cbxMqttDeviceServer.TabIndex = 0;
 			// 
 			// groupBox10
 			// 
@@ -572,6 +562,14 @@
 			this.btnCurrentConfig.UseVisualStyleBackColor = true;
 			this.btnCurrentConfig.Click += new System.EventHandler(this.btnCurrentConfig_Click);
 			// 
+			// cbxDeviceIp
+			// 
+			this.cbxDeviceIp.FormattingEnabled = true;
+			this.cbxDeviceIp.Location = new System.Drawing.Point(6, 19);
+			this.cbxDeviceIp.Name = "cbxDeviceIp";
+			this.cbxDeviceIp.Size = new System.Drawing.Size(139, 23);
+			this.cbxDeviceIp.TabIndex = 33;
+			// 
 			// CloudForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -608,7 +606,6 @@
 			this.statusStrip1.ResumeLayout(false);
 			this.statusStrip1.PerformLayout();
 			this.groupBox5.ResumeLayout(false);
-			this.groupBox5.PerformLayout();
 			this.menuStrip1.ResumeLayout(false);
 			this.menuStrip1.PerformLayout();
 			this.groupBox6.ResumeLayout(false);
@@ -618,7 +615,6 @@
 			this.groupBox8.PerformLayout();
 			this.groupBox9.ResumeLayout(false);
 			this.groupBox11.ResumeLayout(false);
-			this.groupBox11.PerformLayout();
 			this.groupBox10.ResumeLayout(false);
 			this.groupBox10.PerformLayout();
 			this.groupBox12.ResumeLayout(false);
@@ -634,7 +630,6 @@
 
 		private System.Windows.Forms.Button btnShowAllDevices;
 		private System.Windows.Forms.Button btnPing;
-		private System.Windows.Forms.TextBox txtDeviceIP;
 		private System.Windows.Forms.TextBox txtResponseWin;
 		private System.Windows.Forms.Button button3;
 		private System.Windows.Forms.Button button4;
@@ -659,7 +654,7 @@
 		private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
 		private System.Windows.Forms.GroupBox groupBox6;
 		private System.Windows.Forms.Button btnMqttConnect;
-		private System.Windows.Forms.ComboBox cbxMqttServer;
+		private System.Windows.Forms.ComboBox cbxMqttConnectionServer;
 		private System.Windows.Forms.GroupBox groupBox7;
 		private System.Windows.Forms.TextBox txtMacAddr;
 		private System.Windows.Forms.TextBox txtResponceMQTT;
@@ -676,7 +671,8 @@
 		private System.Windows.Forms.Button btnCurrentConfig;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 		private System.Windows.Forms.PictureBox picMqttState;
-		private System.Windows.Forms.TextBox txtSendMqtt;
+		private System.Windows.Forms.ComboBox cbxMqttDeviceServer;
+		private System.Windows.Forms.ComboBox cbxDeviceIp;
 	}
 }
 
