@@ -25,6 +25,7 @@
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CloudForm));
+			this.cbxMqttTopic = new System.Windows.Forms.ComboBox();
 			this.btnShowAllDevices = new System.Windows.Forms.Button();
 			this.btnPing = new System.Windows.Forms.Button();
 			this.txtResponseWin = new System.Windows.Forms.TextBox();
@@ -47,6 +48,7 @@
 			this.label2 = new System.Windows.Forms.Label();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
+			this.cbxDeviceIp = new System.Windows.Forms.ComboBox();
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -66,10 +68,10 @@
 			this.lblHeartbeatMinutes = new System.Windows.Forms.Label();
 			this.txtHeartbeat = new System.Windows.Forms.TextBox();
 			this.groupBox12 = new System.Windows.Forms.GroupBox();
+			this.label1 = new System.Windows.Forms.Label();
 			this.groupBox13 = new System.Windows.Forms.GroupBox();
 			this.picMqttState = new System.Windows.Forms.PictureBox();
 			this.btnCurrentConfig = new System.Windows.Forms.Button();
-			this.cbxDeviceIp = new System.Windows.Forms.ComboBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox4.SuspendLayout();
@@ -87,6 +89,21 @@
 			this.groupBox13.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.picMqttState)).BeginInit();
 			this.SuspendLayout();
+			// 
+			// cbxMqttTopic
+			// 
+			this.cbxMqttTopic.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cbxMqttTopic.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.cbxMqttTopic.FormattingEnabled = true;
+			this.cbxMqttTopic.Items.AddRange(new object[] {
+            "Accepted",
+            "Rejected",
+            "Delta",
+            "Update"});
+			this.cbxMqttTopic.Location = new System.Drawing.Point(133, 12);
+			this.cbxMqttTopic.Name = "cbxMqttTopic";
+			this.cbxMqttTopic.Size = new System.Drawing.Size(84, 21);
+			this.cbxMqttTopic.TabIndex = 36;
 			// 
 			// btnShowAllDevices
 			// 
@@ -324,6 +341,14 @@
 			this.groupBox5.TabStop = false;
 			this.groupBox5.Text = "Device IP";
 			// 
+			// cbxDeviceIp
+			// 
+			this.cbxDeviceIp.FormattingEnabled = true;
+			this.cbxDeviceIp.Location = new System.Drawing.Point(6, 19);
+			this.cbxDeviceIp.Name = "cbxDeviceIp";
+			this.cbxDeviceIp.Size = new System.Drawing.Size(139, 23);
+			this.cbxDeviceIp.TabIndex = 33;
+			// 
 			// menuStrip1
 			// 
 			this.menuStrip1.BackColor = System.Drawing.SystemColors.ControlLight;
@@ -404,13 +429,13 @@
 			this.txtMacAddr.Name = "txtMacAddr";
 			this.txtMacAddr.Size = new System.Drawing.Size(122, 21);
 			this.txtMacAddr.TabIndex = 29;
-			this.txtMacAddr.Text = "18FE34D235CC";
+			this.txtMacAddr.Text = "18FE34CB1832";
 			// 
 			// txtResponceMQTT
 			// 
 			this.txtResponceMQTT.BackColor = System.Drawing.SystemColors.ButtonHighlight;
 			this.txtResponceMQTT.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.txtResponceMQTT.Location = new System.Drawing.Point(6, 19);
+			this.txtResponceMQTT.Location = new System.Drawing.Point(6, 37);
 			this.txtResponceMQTT.Multiline = true;
 			this.txtResponceMQTT.Name = "txtResponceMQTT";
 			this.txtResponceMQTT.ReadOnly = true;
@@ -518,13 +543,23 @@
 			// 
 			// groupBox12
 			// 
+			this.groupBox12.Controls.Add(this.label1);
+			this.groupBox12.Controls.Add(this.cbxMqttTopic);
 			this.groupBox12.Controls.Add(this.txtResponceMQTT);
-			this.groupBox12.Location = new System.Drawing.Point(687, 38);
+			this.groupBox12.Location = new System.Drawing.Point(687, 28);
 			this.groupBox12.Name = "groupBox12";
-			this.groupBox12.Size = new System.Drawing.Size(249, 408);
+			this.groupBox12.Size = new System.Drawing.Size(249, 418);
 			this.groupBox12.TabIndex = 34;
 			this.groupBox12.TabStop = false;
-			this.groupBox12.Text = "MQTT Messages Log ( /accepted )";
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(6, 15);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(110, 13);
+			this.label1.TabIndex = 37;
+			this.label1.Text = "MQTT Messages Log";
 			// 
 			// groupBox13
 			// 
@@ -561,14 +596,6 @@
 			this.btnCurrentConfig.Text = "Get Current Config";
 			this.btnCurrentConfig.UseVisualStyleBackColor = true;
 			this.btnCurrentConfig.Click += new System.EventHandler(this.btnCurrentConfig_Click);
-			// 
-			// cbxDeviceIp
-			// 
-			this.cbxDeviceIp.FormattingEnabled = true;
-			this.cbxDeviceIp.Location = new System.Drawing.Point(6, 19);
-			this.cbxDeviceIp.Name = "cbxDeviceIp";
-			this.cbxDeviceIp.Size = new System.Drawing.Size(139, 23);
-			this.cbxDeviceIp.TabIndex = 33;
 			// 
 			// CloudForm
 			// 
@@ -673,6 +700,8 @@
 		private System.Windows.Forms.PictureBox picMqttState;
 		private System.Windows.Forms.ComboBox cbxMqttDeviceServer;
 		private System.Windows.Forms.ComboBox cbxDeviceIp;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.ComboBox cbxMqttTopic;
 	}
 }
 

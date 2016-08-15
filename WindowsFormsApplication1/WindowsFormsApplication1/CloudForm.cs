@@ -20,6 +20,7 @@ using Newtonsoft.Json.Linq;
 
 namespace WindowsFormsApplication1 {
 
+
 	public partial class CloudForm : Form {
 
 		#region Global Vaiables
@@ -83,6 +84,7 @@ namespace WindowsFormsApplication1 {
 				}
 
 				cbxMqttConnectionServer.Enabled = true;
+				cbxMqttTopic.Enabled = true;
 				txtMacAddr.Enabled = true;
 				btnSendMqtt.Enabled = false;
 				btnCurrentConfig.Enabled = false;
@@ -99,8 +101,13 @@ namespace WindowsFormsApplication1 {
 
 			String mac = txtMacAddr.Text;
 			String server = cbxMqttConnectionServer.Text;
+			
 			topicPub = "$aws/things/" + mac + "/shadow/update";
-			topicSub = "$aws/things/" + mac + "/shadow/update/accepted";
+
+			if (cbxMqttTopic.Text.ToLower() != "update")
+				topicSub = "$aws/things/" + mac + "/shadow/update/" + cbxMqttTopic.Text.ToLower();
+			else
+				topicSub = "$aws/things/" + mac + "/shadow/update";
 
 			MQTTclient = new MqttClient(server);
 
@@ -112,6 +119,7 @@ namespace WindowsFormsApplication1 {
 			txtResponceMQTT.Text += Environment.NewLine + "MQTT Connected: " + server + Environment.NewLine;
 
 			cbxMqttConnectionServer.Enabled = false;
+			cbxMqttTopic.Enabled = false;
 			txtMacAddr.Enabled = false;
 			btnSendMqtt.Enabled = true;
 			btnCurrentConfig.Enabled = true;
@@ -152,9 +160,8 @@ namespace WindowsFormsApplication1 {
 
 		private void Form1_Load(object sender, EventArgs e) {
 
-			cbxMqttConnectionServer.Items.Add("52.91.14.160");
-			cbxMqttConnectionServer.Items.Add("52.90.153.21");
-			cbxMqttConnectionServer.SelectedIndex = 0;
+			txtHeartbeat.MaxLength = 3;
+			textBox4.Text = "nayatel321?_";
 
 			cbxMqttDeviceServer.Items.Add("052.091.014.160");
 			cbxMqttDeviceServer.Items.Add("052.090.153.021");
@@ -163,8 +170,34 @@ namespace WindowsFormsApplication1 {
 			cbxDeviceIp.Items.Add("192.168.4.1");
 			cbxDeviceIp.SelectedIndex = 0;
 
+			cbxMqttConnectionServer.Items.Add("52.91.14.160");
+			cbxMqttConnectionServer.Items.Add("52.90.153.21");
+			cbxMqttConnectionServer.SelectedIndex = 0;
 
-			txtHeartbeat.MaxLength = 3;
+			cbxMqttTopic.SelectedIndex = 0;
+
+
+			//List<ConnectionServer> listConnectionServer = new List<ConnectionServer>();
+
+			//ConnectionServer objConnectionServer;
+
+			//objConnectionServer = new ConnectionServer();
+			//objConnectionServer.ConnectionServerName = "Production";
+			//objConnectionServer.ConnectionServerIp = "52.91.14.160";
+
+			//listConnectionServer.Add(objConnectionServer);
+
+
+			//objConnectionServer = new ConnectionServer();
+			//objConnectionServer.ConnectionServerName = "Development";
+			//objConnectionServer.ConnectionServerIp = "52.90.153.21";
+
+			//listConnectionServer.Add(objConnectionServer);
+
+
+			//cbxMqttConnectionServer.DataSource = listConnectionServer;
+			//cbxMqttConnectionServer.DisplayMember = "ConnectionServerName";
+			//cbxMqttConnectionServer.ValueMember = "ConnectionServerIp";
 		}
 
 		private void btnShowAllDevices_Click(object sender, EventArgs e) {
@@ -215,7 +248,6 @@ namespace WindowsFormsApplication1 {
 		}
 
 		private void btnEraseEeprom(object sender, EventArgs e) {
-			//String command = "DEL:EP\n";
 		}
 
 		private void txtResponseWin_TextChanged(object sender, EventArgs e) {
@@ -333,15 +365,11 @@ namespace WindowsFormsApplication1 {
 
 			try {
 
-				if (btnMqttConnect.Text == "Connect") {
-
+				if (btnMqttConnect.Text == "Connect")
 					MqttConnect();
-				}
 
-				else if (btnMqttConnect.Text == "Disconnect") {
-
+				else if (btnMqttConnect.Text == "Disconnect")
 					MqttDisconnect();
-				}
 			}
 
 			catch (uPLibrary.Networking.M2Mqtt.Exceptions.MqttConnectionException) {
@@ -363,10 +391,19 @@ namespace WindowsFormsApplication1 {
 
 				String message = Encoding.UTF8.GetString(e.Message);
 
-				JObject o = JObject.Parse(message);
-				String state = (o["state"].ToString());
+				try {
+					JObject o = JObject.Parse(message);
+					String state = (o["state"].ToString());
+					txtResponceMQTT.Text += state;
+				}
 
-				txtResponceMQTT.Text += state;
+				catch (Newtonsoft.Json.JsonReaderException) {
+
+					txtResponceMQTT.Text += "Invaid message format!" + Environment.NewLine + Environment.NewLine;
+					txtResponceMQTT.Text += message;
+				}
+
+
 			}));
 		}
 
@@ -411,5 +448,18 @@ namespace WindowsFormsApplication1 {
 
 			ushort msgIdPub = MQTTclient.Publish(topicPub, Encoding.UTF8.GetBytes(MqttMsg), MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
 		}
+	}
+
+	public class ConnectionServer {
+
+		public string ConnectionServerName { get; set; }
+		public string ConnectionServerIp { get; set; }
+
+	}
+
+	public class DeviceServer {
+
+		public string DeviceServerName { get; set; }
+		public string DeviceServerIp { get; set; }
 	}
 }
