@@ -1,465 +1,629 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net.Sockets;
 using System.Net;
-using System.Threading;
 using SocketClient;
 using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
-
+using System.IO;
 
 namespace WindowsFormsApplication1 {
 
 
-	public partial class CloudForm : Form {
+  public partial class CloudForm : Form {
 
-		#region Global Vaiables
+    #region Global Vaiables
 
-		String secondArgument = "";
-		UdpClient udpServer = new UdpClient();
-		SocketClientAsync objSocketClientAsync;
-		String topicPub = "";
-		String topicSub = "";
-		MqttClient MQTTclient;
-		bool isMqttStarted = false;
-		int tcpCommand = 0;
-		bool isMqttDisconnected = true;
+    String secondArgument = "";
+    UdpClient udpServer = new UdpClient();
+    SocketClientAsync objSocketClientAsync;
+    String topicPub = "";
+    String topicSub = "";
+    MqttClient MQTTclient;
+    bool isMqttStarted = false;
+    int tcpCommand = 0;
+    bool isMqttDisconnected = true;
+    double i_white = 0;
 
-		#endregion
+    double i_red = 0;
+    double i_green = 0;
+    double i_blue = 0;
 
-		#region My Functions
+    string red = "";
+    string green = "";
+    string white = "";
+    string blue = "";
 
-		void SendUdpCommand(String command, bool IsBroadcast = false) {
+    #endregion
 
-			UdpClient udpClient = new UdpClient();
-			IPEndPoint ip = new IPEndPoint(IsBroadcast ? IPAddress.Broadcast : IPAddress.Parse(cbxDeviceIp.Text), 9999);
-			byte[] bytes = Encoding.ASCII.GetBytes(command);
-			udpClient.Send(bytes, bytes.Length, ip);
-			udpClient.BeginReceive(new AsyncCallback(recv), udpClient);
-		}
+    #region My Functions
 
-		void MakeConnection(String target, String command) {
+    void SendUdpCommand(string command, bool IsBroadcast = false) {
 
-			string msg = "";
+      UdpClient udpClient = new UdpClient();
+      IPEndPoint ip = new IPEndPoint(IsBroadcast ? IPAddress.Broadcast : IPAddress.Parse(cbxDeviceIp.Text), 9999);
+      byte[] bytes = Encoding.ASCII.GetBytes(command);
+      udpClient.Send(bytes, bytes.Length, ip);
+      udpClient.BeginReceive(new AsyncCallback(recv), udpClient);
+    }
 
-			objSocketClientAsync = new SocketClientAsync(target, 9998);
-			objSocketClientAsync.OnConnect += objSocketClientAsync_OnConnect;
-			objSocketClientAsync.OnDataReceived += objSocketClientAsync_OnDataReceived;
-			objSocketClientAsync.OnErrorOccured += objSocketClientAsync_OnErrorOccured;
-			objSocketClientAsync.OnDisconnect += objSocketClientAsync_OnDisconnect;
+    void MakeConnection(String target, String command) {
 
-			objSocketClientAsync.Connect(ref msg);
+      string msg = "";
 
+      objSocketClientAsync = new SocketClientAsync(target, 9998);
+      objSocketClientAsync.OnConnect += objSocketClientAsync_OnConnect;
+      objSocketClientAsync.OnDataReceived += objSocketClientAsync_OnDataReceived;
+      objSocketClientAsync.OnErrorOccured += objSocketClientAsync_OnErrorOccured;
+      objSocketClientAsync.OnDisconnect += objSocketClientAsync_OnDisconnect;
 
-			List<string> lstdata = new List<string>();
-			lstdata.Add(command);
-			objSocketClientAsync.SendData(lstdata);
-		}
+      objSocketClientAsync.Connect(ref msg);
 
-		void MqttDisconnect(bool isTimerDisconnected = false) {
 
-			if (isMqttDisconnected) {
+      List<string> lstdata = new List<string>();
+      lstdata.Add(command);
+      objSocketClientAsync.SendData(lstdata);
+    }
 
-				isMqttDisconnected = false;
+    void MqttDisconnect(bool isTimerDisconnected = false) {
 
-				if (isTimerDisconnected == false) {
+      if (isMqttDisconnected) {
 
-					try {
-						MQTTclient.Disconnect();
-					}
+        isMqttDisconnected = false;
 
-					catch (Exception a) {
-						MessageBox.Show(a.ToString());
-					}
-				}
+        if (isTimerDisconnected == false) {
 
-				cbxMqttConnectionServer.Enabled = true;
-				cbxMqttTopic.Enabled = true;
-				txtMacAddr.Enabled = true;
-				btnSendMqtt.Enabled = false;
-				btnCurrentConfig.Enabled = false;
-				txtResponceMQTT.Text += Environment.NewLine + Environment.NewLine + "MQTT Disconnected!" + Environment.NewLine + Environment.NewLine;
-				btnMqttConnect.Text = "Connect";
-				picMqttState.Image = Properties.Resources.off;
+          try {
+            MQTTclient.Disconnect();
+          }
 
-			}
-		}
+          catch (Exception a) {
+            MessageBox.Show(a.ToString());
+          }
+        }
 
-		void MqttConnect() {
+        cbxMqttConnectionServer.Enabled = true;
+        cbxMqttTopic.Enabled = true;
+        txtMacAddr.Enabled = true;
+        btnSendMqtt.Enabled = false;
+        btnCurrentConfig.Enabled = false;
+        txtResponceMQTT.Text += Environment.NewLine + Environment.NewLine + "MQTT Disconnected!" + Environment.NewLine + Environment.NewLine;
+        btnMqttConnect.Text = "Connect";
+        picMqttState.Image = Properties.Resources.off;
 
-			isMqttDisconnected = true;
+      }
+    }
 
-			String mac = txtMacAddr.Text;
-			String server = cbxMqttConnectionServer.Text;
-			
-			topicPub = "$aws/things/" + mac + "/shadow/update";
+    void MqttConnect() {
 
-			if (cbxMqttTopic.Text.ToLower() != "update")
-				topicSub = "$aws/things/" + mac + "/shadow/update/" + cbxMqttTopic.Text.ToLower();
-			else
-				topicSub = "$aws/things/" + mac + "/shadow/update";
+      isMqttDisconnected = true;
 
-			MQTTclient = new MqttClient(server);
+      String mac = txtMacAddr.Text;
+      String server = cbxMqttConnectionServer.Text;
 
-			MQTTclient.Connect(Guid.NewGuid().ToString());
-			isMqttStarted = true;
+      topicPub = "$aws/things/" + mac + "/shadow/update";
 
-			ushort msgIdSub = MQTTclient.Subscribe(new string[] { topicSub }, new byte[] { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE });
-			MQTTclient.MqttMsgPublishReceived += client_MqttMsgPublishReceived;
-			txtResponceMQTT.Text += Environment.NewLine + "MQTT Connected: " + server + Environment.NewLine;
+      if (cbxMqttTopic.Text.ToLower() != "update")
+        topicSub = "$aws/things/" + mac + "/shadow/update/" + cbxMqttTopic.Text.ToLower();
+      else
+        topicSub = "$aws/things/" + mac + "/shadow/update";
 
-			cbxMqttConnectionServer.Enabled = false;
-			cbxMqttTopic.Enabled = false;
-			txtMacAddr.Enabled = false;
-			btnSendMqtt.Enabled = true;
-			btnCurrentConfig.Enabled = true;
-			btnMqttConnect.Text = "Disconnect";
-			picMqttState.Image = Properties.Resources.on;
-		}
+      MQTTclient = new MqttClient(server);
 
-		#endregion
+      MQTTclient.Connect(Guid.NewGuid().ToString());
+      isMqttStarted = true;
 
-		private void recv(IAsyncResult res) {
+      ushort msgIdSub = MQTTclient.Subscribe(new string[] { topicSub }, new byte[] { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE });
+      MQTTclient.MqttMsgPublishReceived += client_MqttMsgPublishReceived;
+      txtResponceMQTT.Text += Environment.NewLine + "MQTT Connected: " + server + Environment.NewLine;
 
-			UdpClient udpClient = res.AsyncState as UdpClient;
-			IPEndPoint source = new IPEndPoint(0, 0);
-			byte[] message = udpClient.EndReceive(res, ref source);
+      cbxMqttConnectionServer.Enabled = false;
+      cbxMqttTopic.Enabled = false;
+      txtMacAddr.Enabled = false;
+      btnSendMqtt.Enabled = true;
+      btnCurrentConfig.Enabled = true;
+      btnMqttConnect.Text = "Disconnect";
+      picMqttState.Image = Properties.Resources.on;
+    }
 
-			this.Invoke(new Action(() => {
+    #endregion
 
-				String msg = Encoding.UTF8.GetString(message);
-				string[] words = msg.Split(',');
+    private void recv(IAsyncResult res) {
 
-				txtResponseWin.Text += Environment.NewLine + "====================" + Environment.NewLine;
-				txtResponseWin.Text += "MAC:	" + words[0] + Environment.NewLine;
-				txtResponseWin.Text += secondArgument + words[1] + Environment.NewLine;
+      UdpClient udpClient = res.AsyncState as UdpClient;
+      IPEndPoint source = new IPEndPoint(0, 0);
+      byte[] message = udpClient.EndReceive(res, ref source);
 
-				if (words.Length > 3) {
-					txtResponseWin.Text += "Type:	" + words[3] + Environment.NewLine;
-					txtResponseWin.Text += "WiFi:	" + words[4] + Environment.NewLine;
-				}
+      this.Invoke(new Action(() => {
 
-			}));
+        String msg = Encoding.UTF8.GetString(message);
+        string[] words = msg.Split(',');
 
-			udpClient.BeginReceive(new AsyncCallback(recv), udpClient);
-		}
+        txtResponseWin.Text += Environment.NewLine + "====================" + Environment.NewLine;
+        txtResponseWin.Text += "MAC:	" + words[0] + Environment.NewLine;
+        txtResponseWin.Text += secondArgument + words[1] + Environment.NewLine;
 
-		public CloudForm() {
-			InitializeComponent();
-		}
+        if (words.Length > 3) {
+          txtResponseWin.Text += "Type:	" + words[3] + Environment.NewLine;
+          txtResponseWin.Text += "WiFi:	" + words[4] + Environment.NewLine;
+        }
+
+      }));
+
+      udpClient.BeginReceive(new AsyncCallback(recv), udpClient);
+    }
+
+    public CloudForm() {
+      InitializeComponent();
+    }
+
+    private void Form1_Load(object sender, EventArgs e) {
+
+      txtHeartbeat.MaxLength = 3;
+      textBox4.Text = "nayatel321?_";
+
+      cbxMqttDeviceServer.Items.Add("052.091.014.160");
+      cbxMqttDeviceServer.Items.Add("052.090.153.021");
+      cbxMqttDeviceServer.SelectedIndex = 0;
+
+      cbxDeviceIp.Items.Add("192.168.4.1");
+      cbxDeviceIp.Items.Add("192.168.100.25");
+      cbxDeviceIp.SelectedIndex = 1;
+
+      cbxMqttConnectionServer.Items.Add("52.91.14.160");
+      cbxMqttConnectionServer.Items.Add("52.90.153.21");
+      cbxMqttConnectionServer.SelectedIndex = 0;
+
+      cbxMqttTopic.SelectedIndex = 0;
+
+
+      List<UdpH> listUdp = new List<UdpH>();
+
+      UdpH objUdp = new UdpH();
+      objUdp.UdpName = "Get All Devices";
+      objUdp.UdpCommand = "PG:ALL\n";
+      listUdp.Add(objUdp);
+
+      objUdp = new UdpH();
+      objUdp.UdpName = "Ping";
+      objUdp.UdpCommand = "PG:A\n";
+      listUdp.Add(objUdp);
+
+      objUdp = new UdpH();
+      objUdp.UdpName = "Enable Debug";
+      objUdp.UdpCommand = "DB:ON\n";
+      listUdp.Add(objUdp);
+
+      objUdp = new UdpH();
+      objUdp.UdpName = "Disable Debug";
+      objUdp.UdpCommand = "DB:OFF\n";
+      listUdp.Add(objUdp);
+
+      objUdp = new UdpH();
+      objUdp.UdpName = "Get ESP Version";
+      objUdp.UdpCommand = "VER:ESP\n";
+      listUdp.Add(objUdp);
+
+      objUdp = new UdpH();
+      objUdp.UdpName = "Get ST Version";
+      objUdp.UdpCommand = "VER:ST\n";
+      listUdp.Add(objUdp);
+
+      cbxUdp.DataSource = listUdp;
+      cbxUdp.DisplayMember = "UdpName";
+      cbxUdp.ValueMember = "UdpCommand";
+    }
+
+    private void btnUdpSend_Click(object sender, EventArgs e) {
+      txtResponseWin.Text += cbxUdp.SelectedValue;
+      txtResponseWin.Text = "";
+
+      string command = cbxUdp.SelectedValue.ToString();
+
+      if (command == "PG:ALL\n") {
+        secondArgument = "IP:	";
+        SendUdpCommand(command, true);
+        txtResponseWin.Text = "Getting all devices on the Network..";
+      }
+
+      else if (command == "VER:ST\n") {
+        txtResponseWin.Text = "Getting ST Version.." + Environment.NewLine + Environment.NewLine + "Responce: " + Environment.NewLine;
+        secondArgument = "VER:	";
+        SendUdpCommand(command);
+      }
+
+      else if (command == "VER:ESP\n") {
+        txtResponseWin.Text = "Getting ESP Version.." + Environment.NewLine + Environment.NewLine + "Responce: " + Environment.NewLine;
+        secondArgument = "VER:	";
+        SendUdpCommand(command);
+      }
+
+      else if (command == "PG:A\n") {
+        txtResponseWin.Text = "Sending Ping to Device.." + Environment.NewLine + Environment.NewLine + "Responce: " + Environment.NewLine;
+        secondArgument = "IP:	";
+        command = "PG:ALL\n";
+        SendUdpCommand(command);
+      }
 
-		private void Form1_Load(object sender, EventArgs e) {
+      else if (command == "DB:ON\n") {
+        txtResponseWin.Text = "Sending Debug Enable.." + Environment.NewLine + Environment.NewLine + "Responce: " + Environment.NewLine;
+        secondArgument = "MSG:	";
+        SendUdpCommand(command);
+      }
 
-			txtHeartbeat.MaxLength = 3;
-			textBox4.Text = "nayatel321?_";
+      else if (command == "DB:OFF\n") {
+        txtResponseWin.Text = "Sending Debug Disable.." + Environment.NewLine + Environment.NewLine + "Responce: " + Environment.NewLine;
+        secondArgument = "MSG:	";
+        SendUdpCommand(command);
+      }
 
-			cbxMqttDeviceServer.Items.Add("052.091.014.160");
-			cbxMqttDeviceServer.Items.Add("052.090.153.021");
-			cbxMqttDeviceServer.SelectedIndex = 0;
+      else {
 
-			cbxDeviceIp.Items.Add("192.168.4.1");
-			cbxDeviceIp.SelectedIndex = 0;
+        txtResponseWin.Text = "Sending Command: " + command + Environment.NewLine + Environment.NewLine + "Responce: " + Environment.NewLine;
+        SendUdpCommand(command);
+      }
+    }
 
-			cbxMqttConnectionServer.Items.Add("52.91.14.160");
-			cbxMqttConnectionServer.Items.Add("52.90.153.21");
-			cbxMqttConnectionServer.SelectedIndex = 0;
+    private void btnShowAllDevices_Click(object sender, EventArgs e) {
+      secondArgument = "IP:	";
+      String command = "PG:ALL\n";
+      SendUdpCommand(command, true);
+      txtResponseWin.Text = "Getting all devices on the Network..";
+    }
 
-			cbxMqttTopic.SelectedIndex = 0;
+    private void btnPing_e(object sender, EventArgs e) {
+      txtResponseWin.Text = "Sending Ping to Device.." + Environment.NewLine + Environment.NewLine + "Responce: " + Environment.NewLine;
+      secondArgument = "IP:	";
+      String command = "PG:ALL\n";
 
+      SendUdpCommand(command);
+    }
 
-			//List<ConnectionServer> listConnectionServer = new List<ConnectionServer>();
+    private void btnDebugEnable(object sender, EventArgs e) {
+      txtResponseWin.Text = "Sending Debug Enable.." + Environment.NewLine + Environment.NewLine + "Responce: " + Environment.NewLine;
+      secondArgument = "MSG:	";
+      String command = "DB:ON\n";
 
-			//ConnectionServer objConnectionServer;
+      SendUdpCommand(command);
+    }
 
-			//objConnectionServer = new ConnectionServer();
-			//objConnectionServer.ConnectionServerName = "Production";
-			//objConnectionServer.ConnectionServerIp = "52.91.14.160";
+    private void btnShowSTVersion_e(object sender, EventArgs e) {
+      String command = "VER:ST\n";
+      txtResponseWin.Text = "Getting ST Version.." + Environment.NewLine + Environment.NewLine + "Responce: " + Environment.NewLine;
+      secondArgument = "VER:	";
 
-			//listConnectionServer.Add(objConnectionServer);
+      SendUdpCommand(command);
+    }
 
+    private void btnShowESPVersion_e(object sender, EventArgs e) {
+      txtResponseWin.Text = "Getting ESP Version.." + Environment.NewLine + Environment.NewLine + "Responce: " + Environment.NewLine;
+      String command = "VER:ESP\n";
+      secondArgument = "VER:	";
 
-			//objConnectionServer = new ConnectionServer();
-			//objConnectionServer.ConnectionServerName = "Development";
-			//objConnectionServer.ConnectionServerIp = "52.90.153.21";
+      SendUdpCommand(command);
+    }
 
-			//listConnectionServer.Add(objConnectionServer);
+    private void btnDebugDisable(object sender, EventArgs e) {
+      txtResponseWin.Text = "Sending Debug Disable.." + Environment.NewLine + Environment.NewLine + "Responce: " + Environment.NewLine;
+      secondArgument = "MSG:	";
+      String command = "DB:OFF\n";
 
+      SendUdpCommand(command);
+    }
 
-			//cbxMqttConnectionServer.DataSource = listConnectionServer;
-			//cbxMqttConnectionServer.DisplayMember = "ConnectionServerName";
-			//cbxMqttConnectionServer.ValueMember = "ConnectionServerIp";
-		}
+    private void btnEraseEeprom(object sender, EventArgs e) {
+    }
 
-		private void btnShowAllDevices_Click(object sender, EventArgs e) {
-			secondArgument = "IP:	";
-			String command = "PG:ALL\n";
-			SendUdpCommand(command, true);
-			txtResponseWin.Text = "Getting all devices on the Network..";
-		}
+    private void txtResponseWin_TextChanged(object sender, EventArgs e) {
+      txtResponseWin.SelectionStart = txtResponseWin.Text.Length;
+      txtResponseWin.ScrollToCaret();
+    }
 
-		private void btnPing_e(object sender, EventArgs e) {
-			txtResponseWin.Text = "Sending Ping to Device.." + Environment.NewLine + Environment.NewLine + "Responce: " + Environment.NewLine;
-			secondArgument = "IP:	";
-			String command = "PG:ALL\n";
+    private void btnResetLogs_Click(object sender, EventArgs e) {
+      txtResponseWin.Text = "";
+    }
 
-			SendUdpCommand(command);
-		}
+    private void btnShowWifi(object sender, EventArgs e) {
 
-		private void btnDebugEnable(object sender, EventArgs e) {
-			txtResponseWin.Text = "Sending Debug Enable.." + Environment.NewLine + Environment.NewLine + "Responce: " + Environment.NewLine;
-			secondArgument = "MSG:	";
-			String command = "DB:ON\n";
+      String command = "WL:\n";
+      String target = cbxDeviceIp.Text;
+      tcpCommand = 1;
 
-			SendUdpCommand(command);
-		}
+      MakeConnection(target, command);
+    }
 
-		private void btnShowSTVersion_e(object sender, EventArgs e) {
-			String command = "VER:ST\n";
-			txtResponseWin.Text = "Getting ST Version.." + Environment.NewLine + Environment.NewLine + "Responce: " + Environment.NewLine;
-			secondArgument = "VER:	";
+    private void btnChangeWifi(object sender, EventArgs e) {
+      String ssid = textBox3.Text;
+      String pass = textBox4.Text;
 
-			SendUdpCommand(command);
-		}
+      String command = "ST:" + ssid + "," + pass + ",\n";
+      String target = cbxDeviceIp.Text;
 
-		private void btnShowESPVersion_e(object sender, EventArgs e) {
-			txtResponseWin.Text = "Getting ESP Version.." + Environment.NewLine + Environment.NewLine + "Responce: " + Environment.NewLine;
-			String command = "VER:ESP\n";
-			secondArgument = "VER:	";
+      tcpCommand = 2;
 
-			SendUdpCommand(command);
-		}
+      MakeConnection(target, command);
+    }
 
-		private void btnDebugDisable(object sender, EventArgs e) {
-			txtResponseWin.Text = "Sending Debug Disable.." + Environment.NewLine + Environment.NewLine + "Responce: " + Environment.NewLine;
-			secondArgument = "MSG:	";
-			String command = "DB:OFF\n";
+    private void objSocketClientAsync_OnDisconnect(string IP, int Socket, string ErrorMessage = "", string AdditionalDetails = "") {
+      throw new NotImplementedException();
+    }
 
-			SendUdpCommand(command);
-		}
+    private void objSocketClientAsync_OnErrorOccured(string Message, string Details = "") {
+      MessageBox.Show("Error: haider" + Message);
+    }
 
-		private void btnEraseEeprom(object sender, EventArgs e) {
-		}
+    private void objSocketClientAsync_OnDataReceived(byte[] RawData, Socket RxSocket) {
 
-		private void txtResponseWin_TextChanged(object sender, EventArgs e) {
-			txtResponseWin.SelectionStart = txtResponseWin.Text.Length;
-			txtResponseWin.ScrollToCaret();
-		}
+      String message = Encoding.ASCII.GetString(RawData);
 
-		private void btnResetLogs_Click(object sender, EventArgs e) {
-			txtResponseWin.Text = "";
-		}
+      this.Invoke(new Action(() => {
 
-		private void btnShowWifi(object sender, EventArgs e) {
+        if (tcpCommand == 1) {
 
-			String command = "WL:\n";
-			String target = cbxDeviceIp.Text;
-			tcpCommand = 1;
+          string[] ssidsAllInfo = message.Split(',');
+          int noOfSsids = ssidsAllInfo.Length;
 
-			MakeConnection(target, command);
-		}
+          for (int a = 0; a < noOfSsids - 1; a++) {
 
-		private void btnChangeWifi(object sender, EventArgs e) {
-			String ssid = textBox3.Text;
-			String pass = textBox4.Text;
+            txtResponseWin.Text += Environment.NewLine + "====================";
 
-			String command = "ST:" + ssid + "," + pass + ",\n";
-			String target = cbxDeviceIp.Text;
+            string[] insideInfo = ssidsAllInfo[a].Split(':');
+            int noOfInsideInfo = insideInfo.Length;
 
-			tcpCommand = 2;
+            for (int b = 0; b < noOfInsideInfo; b++) {
 
-			MakeConnection(target, command);
-		}
+              String text = "";
+              bool isLast = false;
 
-		private void objSocketClientAsync_OnDisconnect(string IP, int Socket, string ErrorMessage = "", string AdditionalDetails = "") {
-			throw new NotImplementedException();
-		}
+              if (b == 0)
+                text = "SSID:	";
+              else if (b == 1)
+                text = "Signal:	";
+              else {
+                text = "Security:	";
+                isLast = true;
+              }
+              txtResponseWin.Text += Environment.NewLine + text + insideInfo[b] + (isLast ? Environment.NewLine : "");
+            }
+          }
+        }
 
-		private void objSocketClientAsync_OnErrorOccured(string Message, string Details = "") {
-			MessageBox.Show("Error: haider" + Message);
-		}
+        else if (tcpCommand == 2) {
 
-		private void objSocketClientAsync_OnDataReceived(byte[] RawData, Socket RxSocket) {
+          if (message == "ACK\n") {
+            txtResponseWin.Text += Environment.NewLine + Environment.NewLine + "Device wifi successfuly changed!";
+          }
+        }
 
-			String message = Encoding.ASCII.GetString(RawData);
+      }));
+    }
 
-			this.Invoke(new Action(() => {
+    private void objSocketClientAsync_OnConnect(string IP, int Socket, string ErrorMessage = "", string AdditionalDetails = "") {
 
-				if (tcpCommand == 1) {
+      this.Invoke(new Action(() => {
 
-					string[] ssidsAllInfo = message.Split(',');
-					int noOfSsids = ssidsAllInfo.Length;
+        txtResponseWin.Text = Environment.NewLine + "Connected to Device: " + IP;
+        txtResponseWin.Text += Environment.NewLine + Environment.NewLine + "Please wait.." + Environment.NewLine;
 
-					for (int a = 0; a < noOfSsids - 1; a++) {
+      }));
+    }
 
-						txtResponseWin.Text += Environment.NewLine + "====================";
+    private void timer1_Tick(object sender, EventArgs e) {
+      toolStripStatusLabel1.Text = DateTime.Now.ToString("dddd , dd, MMM yyyy    |    hh:mm:ss");
 
-						string[] insideInfo = ssidsAllInfo[a].Split(':');
-						int noOfInsideInfo = insideInfo.Length;
+      if (isMqttStarted == true) {
 
-						for (int b = 0; b < noOfInsideInfo; b++) {
+        bool MqttStatus = MQTTclient.IsConnected;
 
-							String text = "";
-							bool isLast = false;
+        if (MqttStatus == false) {
+          MqttDisconnect(true);
+        }
+      }
+    }
 
-							if (b == 0)
-								text = "SSID:	";
-							else if (b == 1)
-								text = "Signal:	";
-							else {
-								text = "Security:	";
-								isLast = true;
-							}
-							txtResponseWin.Text += Environment.NewLine + text + insideInfo[b] + (isLast ? Environment.NewLine : "");
-						}
-					}
-				}
+    private void btnMqttConnect_Click(object sender, EventArgs e) {
 
-				else if (tcpCommand == 2) {
+      try {
 
-					if (message == "ACK\n") {
-						txtResponseWin.Text += Environment.NewLine + Environment.NewLine + "Device wifi successfuly changed!";
-					}
-				}
+        if (btnMqttConnect.Text == "Connect")
+          MqttConnect();
 
-			}));
-		}
+        else if (btnMqttConnect.Text == "Disconnect")
+          MqttDisconnect();
+      }
 
-		private void objSocketClientAsync_OnConnect(string IP, int Socket, string ErrorMessage = "", string AdditionalDetails = "") {
+      catch (uPLibrary.Networking.M2Mqtt.Exceptions.MqttConnectionException) {
+        MessageBox.Show("Network connectivity error!", "Error Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
 
-			this.Invoke(new Action(() => {
+      catch (Exception a) {
+        MessageBox.Show(a.ToString());
+      }
+    }
 
-				txtResponseWin.Text = Environment.NewLine + "Connected to Device: " + IP;
-				txtResponseWin.Text += Environment.NewLine + Environment.NewLine + "Please wait.." + Environment.NewLine;
+    private void client_MqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e) {
 
-			}));
-		}
+      this.Invoke(new Action(() => {
 
-		private void timer1_Tick(object sender, EventArgs e) {
-			toolStripStatusLabel1.Text = DateTime.Now.ToString("dddd , dd, MMM yyyy    |    hh:mm:ss");
+        txtResponceMQTT.Text += Environment.NewLine + Environment.NewLine + "Received MQTT message [ " + DateTime.Now.ToString("hh:mm:ss") + " ]"
+                                                    + Environment.NewLine
+                                                    + Environment.NewLine;
 
-			if (isMqttStarted == true) {
+        String message = Encoding.UTF8.GetString(e.Message);
 
-				bool MqttStatus = MQTTclient.IsConnected;
+        try {
+          JObject o = JObject.Parse(message);
+          String state = (o["state"].ToString());
+          txtResponceMQTT.Text += state;
+        }
 
-				if (MqttStatus == false) {
-					MqttDisconnect(true);
-				}
-			}
-		}
+        catch (Newtonsoft.Json.JsonReaderException) {
 
-		private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
-			MessageBox.Show("Version: 0.0.7\nAuthor: Haider Mirza", "About This Software", MessageBoxButtons.OK, MessageBoxIcon.Information);
-		}
+          txtResponceMQTT.Text += "Invaid message format!" + Environment.NewLine + Environment.NewLine;
+          txtResponceMQTT.Text += message;
+        }
 
-		private void btnMqttConnect_Click(object sender, EventArgs e) {
 
-			try {
+      }));
+    }
 
-				if (btnMqttConnect.Text == "Connect")
-					MqttConnect();
+    private void txtResponceMQTT_TextChanged(object sender, EventArgs e) {
+      txtResponceMQTT.SelectionStart = txtResponceMQTT.Text.Length;
+      txtResponceMQTT.ScrollToCaret();
+    }
 
-				else if (btnMqttConnect.Text == "Disconnect")
-					MqttDisconnect();
-			}
+    private void btnEraseResponceWin_Click(object sender, EventArgs e) {
+      txtResponceMQTT.Text = "";
+    }
 
-			catch (uPLibrary.Networking.M2Mqtt.Exceptions.MqttConnectionException) {
-				MessageBox.Show("Network connectivity error!", "Error Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
+    private void txtHeartbeat_TextChanged(object sender, EventArgs e) {
 
-			catch (Exception a) {
-				MessageBox.Show(a.ToString());
-			}
-		}
+      if (txtHeartbeat.Text != "") {
 
-		private void client_MqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e) {
+        int secs = Convert.ToInt32(txtHeartbeat.Text) * 30;
+        double mins = (secs / 60d);
+        lblHeartbeatMinutes.Text = "X 30s = " + mins.ToString() + " Min";
+      }
+      else
+        lblHeartbeatMinutes.Text = "X 30s = " + "0" + " Min";
+    }
 
-			this.Invoke(new Action(() => {
+    private void btnSendMqtt_Click(object sender, EventArgs e) {
 
-				txtResponceMQTT.Text += Environment.NewLine + Environment.NewLine + "Received MQTT message [ " + DateTime.Now.ToString("hh:mm:ss") + " ]"
-															+ Environment.NewLine
-															+ Environment.NewLine;
+      String MqttMsgHeartbeat = Convert.ToInt32(txtHeartbeat.Text).ToString("D3");
 
-				String message = Encoding.UTF8.GetString(e.Message);
+      String MqttMsg = "{\"state\":{\"reported\":null,\"desired\":{\"MqttServer\":\""
+                                          + cbxMqttDeviceServer.Text
+                                          + "\",\"ASrc\":\"Cloud\",\"CMD\":\"SETCONFIG\",\"TS\":\"1466245734\",\"Heartbeat\":\""
+                                          + MqttMsgHeartbeat
+                                          + "\"}}}";
 
-				try {
-					JObject o = JObject.Parse(message);
-					String state = (o["state"].ToString());
-					txtResponceMQTT.Text += state;
-				}
 
-				catch (Newtonsoft.Json.JsonReaderException) {
+      ushort msgIdPub = MQTTclient.Publish(topicPub, Encoding.UTF8.GetBytes(MqttMsg), MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
+    }
 
-					txtResponceMQTT.Text += "Invaid message format!" + Environment.NewLine + Environment.NewLine;
-					txtResponceMQTT.Text += message;
-				}
+    private void btnCurrentConfig_Click(object sender, EventArgs e) {
 
+      String MqttMsg = "{\"state\":{\"reported\":null,\"desired\":{\"ASrc\":\"Cloud\",\"CMD\":\"GETCONFIG\",\"TS\":\"1466245734\"}}}";
 
-			}));
-		}
+      ushort msgIdPub = MQTTclient.Publish(topicPub, Encoding.UTF8.GetBytes(MqttMsg), MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
+    }
 
-		private void txtResponceMQTT_TextChanged(object sender, EventArgs e) {
-			txtResponceMQTT.SelectionStart = txtResponceMQTT.Text.Length;
-			txtResponceMQTT.ScrollToCaret();
-		}
+    private void cbxDeviceIp_SelectedIndexChanged(object sender, EventArgs e) {
 
-		private void btnEraseResponceWin_Click(object sender, EventArgs e) {
-			txtResponceMQTT.Text = "";
-		}
+    }
 
-		private void txtHeartbeat_TextChanged(object sender, EventArgs e) {
+    private void fullBrightToolStripMenuItem_Click(object sender, EventArgs e) {
 
-			if (txtHeartbeat.Text != "") {
+      string command = "L4080,4080,4080,4080,\n";
 
-				int secs = Convert.ToInt32(txtHeartbeat.Text) * 30;
-				double mins = (secs / 60d);
-				lblHeartbeatMinutes.Text = "X 30s = " + mins.ToString() + " Min";
-			}
-			else
-				lblHeartbeatMinutes.Text = "X 30s = " + "0" + " Min";
-		}
+      SendUdpCommand(command);
+    }
 
-		private void btnSendMqtt_Click(object sender, EventArgs e) {
+    private void trkWhite_ValueChanged(object sender, EventArgs e) {
 
-			String MqttMsgHeartbeat = Convert.ToInt32(txtHeartbeat.Text).ToString("D3");
+      i_white = trkWhite.Value;
 
-			String MqttMsg = "{\"state\":{\"reported\":null,\"desired\":{\"MqttServer\":\""
-												+ cbxMqttDeviceServer.Text
-												+ "\",\"ASrc\":\"Cloud\",\"CMD\":\"SETCONFIG\",\"TS\":\"1466245734\",\"Heartbeat\":\""
-												+ MqttMsgHeartbeat
-												+ "\"}}}";
+      lblBright.Text = "Brightness: " + i_white.ToString();
 
+      i_white = (i_white / 255.0) * 4080;
+      white = i_white.ToString();
 
-			ushort msgIdPub = MQTTclient.Publish(topicPub, Encoding.UTF8.GetBytes(MqttMsg), MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
-		}
+      string command = "L" + red + "," + green + "," + blue + "," + white + ",\n";
 
-		private void btnCurrentConfig_Click(object sender, EventArgs e) {
+      SendUdpCommand(command);
 
-			String MqttMsg = "{\"state\":{\"reported\":null,\"desired\":{\"ASrc\":\"Cloud\",\"CMD\":\"GETCONFIG\",\"TS\":\"1466245734\"}}}";
+    }
 
-			ushort msgIdPub = MQTTclient.Publish(topicPub, Encoding.UTF8.GetBytes(MqttMsg), MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
-		}
-	}
+    private void seletColorToolStripMenuItem_Click(object sender, EventArgs e) {
 
-	public class ConnectionServer {
+      colorDialog1.ShowDialog();
 
-		public string ConnectionServerName { get; set; }
-		public string ConnectionServerIp { get; set; }
+      i_red = colorDialog1.Color.R;
+      i_green = colorDialog1.Color.G;
+      i_blue = colorDialog1.Color.B;
 
-	}
+      txtResponseWin.Text += "==========================" + Environment.NewLine;
+      txtResponseWin.Text += "Red: " + i_red.ToString() + Environment.NewLine;
+      txtResponseWin.Text += "Green: " + i_green.ToString() + Environment.NewLine;
+      txtResponseWin.Text += "Blue: " + i_blue.ToString() + Environment.NewLine;
 
-	public class DeviceServer {
+      i_red = (i_red / 255.0) * 4080;
+      i_green = (i_green / 255.0) * 4080;
+      i_blue = (i_blue / 255.0) * 4080;
+      i_white = (i_white / 225.0) * 4080;
 
-		public string DeviceServerName { get; set; }
-		public string DeviceServerIp { get; set; }
-	}
+      red = i_red.ToString();
+      green = i_green.ToString();
+      white = i_white.ToString();
+      blue = i_blue.ToString();
+
+      txtResponseWin.Text += Environment.NewLine;
+      txtResponseWin.Text += "Command Red: " + red + Environment.NewLine;
+      txtResponseWin.Text += "Command Green: " + green + Environment.NewLine;
+      txtResponseWin.Text += "Command Blue: " + blue + Environment.NewLine;
+
+
+      string command = "L" + red + "," + green + "," + blue + "," + white + ",\n";
+
+      SendUdpCommand(command);
+    }
+
+    private void infoToolStripMenuItem_Click(object sender, EventArgs e) {
+      MessageBox.Show("Version: 0.0.9\nAuthor: Haider Mirza", "About This Software", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+    }
+
+    private void checksumCalculatorToolStripMenuItem_Click(object sender, EventArgs e) {
+
+      txtResponseWin.Text = "";
+      string path = "";
+      byte ch;
+      byte checkSum = 0;
+
+      OpenFileDialog choofdlog = new OpenFileDialog();
+      if (choofdlog.ShowDialog() == DialogResult.OK) {
+        path = choofdlog.FileName;
+        txtResponseWin.Text += Environment.NewLine + "File path: " + Environment.NewLine + path;
+      }
+
+      StreamReader reader;
+      reader = new StreamReader(path);
+      int removeGarbage = 0;
+      do {
+        ch = (byte) reader.Read();
+        if (removeGarbage == 1)
+          checkSum ^= ch;
+
+        if (ch == '$')
+          removeGarbage = 1;
+      }
+
+      while (!reader.EndOfStream);
+      reader.Close();
+      reader.Dispose();
+
+      FileInfo f = new FileInfo(path);
+      long fileSize = f.Length - 1;
+
+      txtResponseWin.Text += Environment.NewLine + Environment.NewLine + "Checksum: " + checkSum ;
+      txtResponseWin.Text += Environment.NewLine + "Size: " + fileSize;
+    }
+  }
+
+  public class UdpH {
+
+    public string UdpName { get; set; }
+    public string UdpCommand { get; set; }
+    public string UdpArg { get; set; }
+  }
+
+  public class DeviceServer {
+
+    public string DeviceServerName { get; set; }
+    public string DeviceServerIp { get; set; }
+  }
 }
