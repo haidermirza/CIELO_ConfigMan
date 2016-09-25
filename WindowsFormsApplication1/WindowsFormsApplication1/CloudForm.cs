@@ -192,7 +192,12 @@ namespace WindowsFormsApplication1 {
       objUdp.UdpCommand = "PG:A\n";
       listUdp.Add(objUdp);
 
-      objUdp = new UdpH();
+			objUdp = new UdpH();
+			objUdp.UdpName = "Get Temp/Hum";
+			objUdp.UdpCommand = "GET:TEMP\n";
+			listUdp.Add(objUdp);
+
+			objUdp = new UdpH();
       objUdp.UdpName = "Enable Debug";
       objUdp.UdpCommand = "DB:ON\n";
       listUdp.Add(objUdp);
@@ -212,7 +217,8 @@ namespace WindowsFormsApplication1 {
       objUdp.UdpCommand = "VER:ST\n";
       listUdp.Add(objUdp);
 
-      cbxUdp.DataSource = listUdp;
+
+			cbxUdp.DataSource = listUdp;
       cbxUdp.DisplayMember = "UdpName";
       cbxUdp.ValueMember = "UdpCommand";
     }
@@ -260,7 +266,13 @@ namespace WindowsFormsApplication1 {
         SendUdpCommand(command);
       }
 
-      else {
+			else if (command == "GET:TEMP\n") {
+				txtResponseWin.Text = "Sending Get Temp request.." + Environment.NewLine + Environment.NewLine + "Responce: " + Environment.NewLine;
+				secondArgument = "MSG:	";
+				SendUdpCommand(command);
+			}
+
+			else {
 
         txtResponseWin.Text = "Sending Command: " + command + Environment.NewLine + Environment.NewLine + "Responce: " + Environment.NewLine;
         SendUdpCommand(command);
@@ -518,7 +530,7 @@ namespace WindowsFormsApplication1 {
 
     private void fullBrightToolStripMenuItem_Click(object sender, EventArgs e) {
 
-      string command = "L4080,4080,4080,4080,\n";
+      string command = "L1,255,255,255,255,\n";
 
       SendUdpCommand(command);
     }
@@ -551,11 +563,6 @@ namespace WindowsFormsApplication1 {
       txtResponseWin.Text += "Green: " + i_green.ToString() + Environment.NewLine;
       txtResponseWin.Text += "Blue: " + i_blue.ToString() + Environment.NewLine;
 
-      i_red = (i_red / 255.0) * 4080;
-      i_green = (i_green / 255.0) * 4080;
-      i_blue = (i_blue / 255.0) * 4080;
-      i_white = (i_white / 225.0) * 4080;
-
       red = i_red.ToString();
       green = i_green.ToString();
       white = i_white.ToString();
@@ -567,8 +574,8 @@ namespace WindowsFormsApplication1 {
       txtResponseWin.Text += "Command Blue: " + blue + Environment.NewLine;
 
 
-      string command = "L" + red + "," + green + "," + blue + "," + white + ",\n";
-
+      string command = "L1," + red + "," + green + "," + blue + "," + white + ",\n";
+      //MessageBox.Show(command);
       SendUdpCommand(command);
     }
 
@@ -611,6 +618,12 @@ namespace WindowsFormsApplication1 {
 
       txtResponseWin.Text += Environment.NewLine + Environment.NewLine + "Checksum: " + checkSum ;
       txtResponseWin.Text += Environment.NewLine + "Size: " + fileSize;
+    }
+
+    private void turnOffToolStripMenuItem_Click(object sender, EventArgs e) {
+      string command = "L0,255,255,255,255,\n";
+
+      SendUdpCommand(command);
     }
   }
 

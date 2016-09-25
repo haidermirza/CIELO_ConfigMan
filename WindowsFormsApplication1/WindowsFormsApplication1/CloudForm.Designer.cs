@@ -76,6 +76,7 @@
       this.groupBox14 = new System.Windows.Forms.GroupBox();
       this.btnUdpSend = new System.Windows.Forms.Button();
       this.cbxUdp = new System.Windows.Forms.ComboBox();
+      this.turnOffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.groupBox2.SuspendLayout();
       this.groupBox4.SuspendLayout();
       this.groupBox3.SuspendLayout();
@@ -246,9 +247,9 @@
       // 
       this.groupBox5.Controls.Add(this.cbxDeviceIp);
       this.groupBox5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.groupBox5.Location = new System.Drawing.Point(16, 38);
+      this.groupBox5.Location = new System.Drawing.Point(16, 56);
       this.groupBox5.Name = "groupBox5";
-      this.groupBox5.Size = new System.Drawing.Size(172, 55);
+      this.groupBox5.Size = new System.Drawing.Size(162, 55);
       this.groupBox5.TabIndex = 24;
       this.groupBox5.TabStop = false;
       this.groupBox5.Text = "Device IP";
@@ -273,7 +274,7 @@
             this.aboutToolStripMenuItem});
       this.menuStrip1.Location = new System.Drawing.Point(0, 0);
       this.menuStrip1.Name = "menuStrip1";
-      this.menuStrip1.Size = new System.Drawing.Size(1047, 25);
+      this.menuStrip1.Size = new System.Drawing.Size(1047, 27);
       this.menuStrip1.TabIndex = 25;
       this.menuStrip1.Text = "menuStrip1";
       // 
@@ -281,17 +282,18 @@
       // 
       this.lumiToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.seletColorToolStripMenuItem,
-            this.fullBrightToolStripMenuItem});
-      this.lumiToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(1)), true);
+            this.fullBrightToolStripMenuItem,
+            this.turnOffToolStripMenuItem});
+      this.lumiToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(1)), true);
       this.lumiToolStripMenuItem.Name = "lumiToolStripMenuItem";
-      this.lumiToolStripMenuItem.Size = new System.Drawing.Size(46, 21);
+      this.lumiToolStripMenuItem.Size = new System.Drawing.Size(51, 23);
       this.lumiToolStripMenuItem.Text = "Lumi";
       // 
       // seletColorToolStripMenuItem
       // 
       this.seletColorToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(1)), true);
       this.seletColorToolStripMenuItem.Name = "seletColorToolStripMenuItem";
-      this.seletColorToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+      this.seletColorToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
       this.seletColorToolStripMenuItem.Text = "Set Color";
       this.seletColorToolStripMenuItem.Click += new System.EventHandler(this.seletColorToolStripMenuItem_Click);
       // 
@@ -299,7 +301,7 @@
       // 
       this.fullBrightToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(1)), true);
       this.fullBrightToolStripMenuItem.Name = "fullBrightToolStripMenuItem";
-      this.fullBrightToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+      this.fullBrightToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
       this.fullBrightToolStripMenuItem.Text = "Full bright";
       this.fullBrightToolStripMenuItem.Click += new System.EventHandler(this.fullBrightToolStripMenuItem_Click);
       // 
@@ -307,16 +309,16 @@
       // 
       this.oTAToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.checksumCalculatorToolStripMenuItem});
-      this.oTAToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(1)), true);
+      this.oTAToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(1)), true);
       this.oTAToolStripMenuItem.Name = "oTAToolStripMenuItem";
-      this.oTAToolStripMenuItem.Size = new System.Drawing.Size(41, 21);
+      this.oTAToolStripMenuItem.Size = new System.Drawing.Size(46, 23);
       this.oTAToolStripMenuItem.Text = "OTA";
       // 
       // checksumCalculatorToolStripMenuItem
       // 
       this.checksumCalculatorToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(1)), true);
       this.checksumCalculatorToolStripMenuItem.Name = "checksumCalculatorToolStripMenuItem";
-      this.checksumCalculatorToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+      this.checksumCalculatorToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
       this.checksumCalculatorToolStripMenuItem.Text = "Checksum Calculator";
       this.checksumCalculatorToolStripMenuItem.Click += new System.EventHandler(this.checksumCalculatorToolStripMenuItem_Click);
       // 
@@ -327,22 +329,22 @@
       this.aboutToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripSeparator1,
             this.infoToolStripMenuItem});
-      this.aboutToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.aboutToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
       this.aboutToolStripMenuItem.RightToLeft = System.Windows.Forms.RightToLeft.No;
-      this.aboutToolStripMenuItem.Size = new System.Drawing.Size(55, 21);
+      this.aboutToolStripMenuItem.Size = new System.Drawing.Size(59, 23);
       this.aboutToolStripMenuItem.Text = "About";
       // 
       // toolStripSeparator1
       // 
       this.toolStripSeparator1.Name = "toolStripSeparator1";
-      this.toolStripSeparator1.Size = new System.Drawing.Size(95, 6);
+      this.toolStripSeparator1.Size = new System.Drawing.Size(96, 6);
       // 
       // infoToolStripMenuItem
       // 
       this.infoToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.infoToolStripMenuItem.Name = "infoToolStripMenuItem";
-      this.infoToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
+      this.infoToolStripMenuItem.Size = new System.Drawing.Size(99, 22);
       this.infoToolStripMenuItem.Text = "Info";
       this.infoToolStripMenuItem.Click += new System.EventHandler(this.infoToolStripMenuItem_Click);
       // 
@@ -589,9 +591,9 @@
       this.groupBox14.Controls.Add(this.btnUdpSend);
       this.groupBox14.Controls.Add(this.cbxUdp);
       this.groupBox14.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.groupBox14.Location = new System.Drawing.Point(16, 123);
+      this.groupBox14.Location = new System.Drawing.Point(16, 135);
       this.groupBox14.Name = "groupBox14";
-      this.groupBox14.Size = new System.Drawing.Size(234, 55);
+      this.groupBox14.Size = new System.Drawing.Size(223, 55);
       this.groupBox14.TabIndex = 40;
       this.groupBox14.TabStop = false;
       this.groupBox14.Text = "Quick Commands";
@@ -601,7 +603,7 @@
       this.btnUdpSend.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.btnUdpSend.Location = new System.Drawing.Point(153, 19);
       this.btnUdpSend.Name = "btnUdpSend";
-      this.btnUdpSend.Size = new System.Drawing.Size(68, 23);
+      this.btnUdpSend.Size = new System.Drawing.Size(48, 23);
       this.btnUdpSend.TabIndex = 34;
       this.btnUdpSend.Text = "Send";
       this.btnUdpSend.UseVisualStyleBackColor = true;
@@ -615,6 +617,14 @@
       this.cbxUdp.Name = "cbxUdp";
       this.cbxUdp.Size = new System.Drawing.Size(139, 23);
       this.cbxUdp.TabIndex = 33;
+      // 
+      // turnOffToolStripMenuItem
+      // 
+      this.turnOffToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(1)), true);
+      this.turnOffToolStripMenuItem.Name = "turnOffToolStripMenuItem";
+      this.turnOffToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+      this.turnOffToolStripMenuItem.Text = "Turn Off";
+      this.turnOffToolStripMenuItem.Click += new System.EventHandler(this.turnOffToolStripMenuItem_Click);
       // 
       // CloudForm
       // 
@@ -727,6 +737,7 @@
     private System.Windows.Forms.ToolStripMenuItem oTAToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem checksumCalculatorToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem infoToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem turnOffToolStripMenuItem;
   }
 }
 
